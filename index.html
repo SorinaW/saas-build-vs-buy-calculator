@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build vs Buy Calculator | Make Data-Driven Decisions</title>
+    <meta name="description" content="Calculate the true cost of building vs buying software tools. Interactive calculator for CTOs and engineering leaders.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 18px;
+            color: #ccc;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        @media (max-width: 968px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 24px;
+            border-radius: 12px;
+            border: 2px solid #e1e4e8;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #000;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #2d2d2d;
+            font-size: 14px;
+        }
+
+        label .optional {
+            color: #999;
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-prefix {
+            position: relative;
+        }
+
+        .input-prefix::before {
+            content: '$';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+        }
+
+        .input-prefix input {
+            padding-left: 28px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .results {
+            background: white;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .result-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-card .amount {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .result-card .detail {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .comparison {
+            background: #f8f9fa;
+            padding: 24px;
+            border-radius: 12px;
+            border: 2px solid #e1e4e8;
+        }
+
+        .comparison h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #000;
+        }
+
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .comparison-item:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-item .label {
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+
+        .comparison-item .value {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .recommendation {
+            background: #e8f5e9;
+            border: 3px solid #4caf50;
+            padding: 24px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .recommendation.danger {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+
+        .recommendation h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #000;
+        }
+
+        .recommendation p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #2d2d2d;
+        }
+
+        .recommendation ul {
+            margin-top: 12px;
+            margin-left: 20px;
+        }
+
+        .recommendation li {
+            margin-bottom: 6px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 24px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .chart {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 2px solid #e1e4e8;
+        }
+
+        .bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .bar-label {
+            width: 80px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            transition: width 0.6s ease;
+        }
+
+        .bar-fill.build {
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .button-group {
+                display: none;
+            }
+        }
+
+        /* Tooltip system for technical terms */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            color: #667eea;
+            font-weight: 600;
+            border-bottom: 1px dotted #667eea;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 280px;
+            background-color: #2d2d2d;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 13px;
+            line-height: 1.5;
+            font-weight: 400;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2d2d2d transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .info-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 4px;
+            cursor: help;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Build vs Buy Calculator</h1>
+            <p>Make data-driven infrastructure decisions in 2026</p>
+        </header>
+
+        <div class="content">
+            <!-- Input Section -->
+            <div class="inputs">
+                <div class="section">
+                    <h2>Build Costs</h2>
+
+                    <div class="form-group">
+                        <label for="engineerMonths">Engineer-Months Required</label>
+                        <input type="number" id="engineerMonths" value="6" min="0" step="0.5">
+                        <div class="help-text">How many months of engineering time to build?</div>
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="engineerCost">Monthly Engineer Cost (Fully Loaded)</label>
+                        <input type="number" id="engineerCost" value="15000" min="0" step="1000">
+                        <div class="help-text">Salary + benefits + overhead</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maintenanceHours">Monthly Maintenance Hours <span class="optional">(optional)</span></label>
+                        <input type="number" id="maintenanceHours" value="20" min="0" step="1">
+                        <div class="help-text">Ongoing support, updates, bug fixes</div>
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="hourlyRate">Hourly Rate <span class="optional">(optional)</span></label>
+                        <input type="number" id="hourlyRate" value="150" min="0" step="10">
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="opportunityCost">
+                            <span class="tooltip">Opportunity Cost<span class="tooltiptext">Money you LOSE because your engineers are building this instead of building features that make money. If this takes 6 months and delays a $500K feature launch, that's your opportunity cost.</span></span> (Revenue Impact)
+                            <span class="optional">(optional)</span>
+                        </label>
+                        <input type="number" id="opportunityCost" value="200000" min="0" step="10000">
+                        <div class="help-text">Lost revenue from delayed features</div>
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="hiddenCosts">Hidden Costs (Infrastructure, Security, etc) <span class="optional">(optional)</span></label>
+                        <input type="number" id="hiddenCosts" value="10000" min="0" step="1000">
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Buy Costs</h2>
+
+                    <div style="background: #e3f2fd; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; border-left: 4px solid #2196f3;">
+                        <strong>💡 Time to Value:</strong> The time from "we decided to do this" until "it's working and people are using it." For building, this includes development, testing, and bugs. For buying, this includes setup, integration, and team onboarding.
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="saasAnnual">Annual SaaS Cost</label>
+                        <input type="number" id="saasAnnual" value="120000" min="0" step="1000">
+                        <div class="help-text">Yearly subscription cost</div>
+                    </div>
+
+                    <div class="form-group input-prefix">
+                        <label for="implementation">Implementation Cost <span class="optional">(optional)</span></label>
+                        <input type="number" id="implementation" value="10000" min="0" step="1000">
+                        <div class="help-text">One-time setup, integration, training</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeToValueBuild">Time to Value: Build (months)</label>
+                        <input type="number" id="timeToValueBuild" value="6" min="0" step="0.5">
+                        <div class="help-text">How long until your team finishes building and it's actually usable in production? Include testing, bugs, iterations.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeToValueBuy">Time to Value: Buy (weeks)</label>
+                        <input type="number" id="timeToValueBuy" value="2" min="0" step="0.5">
+                        <div class="help-text">How long until the SaaS is set up, integrated, and your team is actually using it? Include onboarding, training, API integration.</div>
+                    </div>
+                </div>
+
+                <!-- Advanced/Realistic Factors -->
+                <div class="section" style="grid-column: 1 / -1; background: #fff3e0; border-color: #ff9800;">
+                    <h2 style="border-color: #ff9800; cursor: pointer;" onclick="toggleAdvanced()">
+                        ⚠️ Reality Check: Advanced Factors <span id="advancedToggle">(Show)</span>
+                    </h2>
+                    <div id="advancedFields" style="display: none;">
+                        <p style="margin-bottom: 20px; font-size: 14px; color: #666;">
+                            <strong>Real talk:</strong> Most calculators assume everything goes perfectly. This one doesn't. Add these factors for a realistic view.
+                        </p>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <!-- Left Column -->
+                            <div>
+                                <h3 style="font-size: 16px; margin-bottom: 12px; color: #000;">Build Reality Check</h3>
+
+                                <div class="form-group">
+                                    <label for="failureRisk">Probability Build Runs Over Budget (%) <span class="optional">(optional)</span></label>
+                                    <input type="number" id="failureRisk" value="30" min="0" max="100" step="5">
+                                    <div class="help-text">Industry average: 70% of projects run over. Be honest.</div>
+                                </div>
+
+                                <div class="form-group input-prefix">
+                                    <label for="overrunCost">Cost Overrun if Delayed <span class="optional">(optional)</span></label>
+                                    <input type="number" id="overrunCost" value="50000" min="0" step="10000">
+                                    <div class="help-text">Extra cost if build takes longer than planned</div>
+                                </div>
+
+                                <div class="form-group input-prefix">
+                                    <label for="busFactor">
+                                        <span class="tooltip">Bus Factor Cost<span class="tooltiptext">What happens if the person who built this gets hit by a bus (or just quits)? Includes: recruiter fees, replacement training, documenting undocumented code, fixing "temporary" hacks.</span></span> (Engineer Quits)
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="busFactor" value="30000" min="0" step="5000">
+                                    <div class="help-text">Cost to hire + train replacement + document their code</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="supportHours">Support Hours/Month (User Questions) <span class="optional">(optional)</span></label>
+                                    <input type="number" id="supportHours" value="10" min="0" step="1">
+                                    <div class="help-text">Separate from maintenance. Slack pings, bug reports, onboarding.</div>
+                                </div>
+
+                                <div class="form-group input-prefix">
+                                    <label for="complianceCost">
+                                        Annual <span class="tooltip">Compliance Tax<span class="tooltiptext">Ongoing cost to keep this tool secure and legal. SaaS vendors handle this for you. When you build, YOU pay for: SOC 2 audits, GDPR compliance, security patches, penetration testing. Every. Single. Year.</span></span>
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="complianceCost" value="15000" min="0" step="5000">
+                                    <div class="help-text">SOC 2, GDPR, security audits, pen testing (yearly)</div>
+                                </div>
+
+                                <div class="form-group input-prefix">
+                                    <label for="scaleCost">Cost to Scale at 10x Users <span class="optional">(optional)</span></label>
+                                    <input type="number" id="scaleCost" value="40000" min="0" step="10000">
+                                    <div class="help-text">Infrastructure + optimization when usage explodes</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="velocityImpact">
+                                        <span class="tooltip">Team Velocity Loss<span class="tooltiptext">When one engineer is building this tool, the REST of the team slows down. Why? They're blocked waiting for the tool, using janky workarounds, or getting interrupted with "when will it be ready?" questions.</span></span> (%)
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="velocityImpact" value="15" min="0" max="100" step="5">
+                                    <div class="help-text">How much slower is the team while 1 person builds this?</div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div>
+                                <h3 style="font-size: 16px; margin-bottom: 12px; color: #000;">Additional Costs</h3>
+
+                                <div class="form-group input-prefix">
+                                    <label for="hiringCost">Need to Hire Someone? <span class="optional">(optional)</span></label>
+                                    <input type="number" id="hiringCost" value="0" min="0" step="5000">
+                                    <div class="help-text">Recruiter fee ($20K) + 3-5 months delay</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="competitiveDelay">
+                                        <span class="tooltip">Competitive Disadvantage<span class="tooltiptext">While you're building this for 6 months, your competitors bought the SaaS tool in 2 weeks and have been shipping features for 4 months longer than you. That's a competitive gap that costs real money.</span></span> (months)
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="competitiveDelay" value="5" min="0" step="0.5">
+                                    <div class="help-text">How long are you behind competitors who bought SaaS?</div>
+                                </div>
+
+                                <div class="form-group input-prefix">
+                                    <label for="monthlyRevenueImpact">
+                                        <span class="tooltip">Monthly Revenue Impact<span class="tooltiptext">What does being behind cost you each month? Lost deals because competitors have features you don't. Slower growth. Customer churn. Example: If you lose 2 deals/month at $25K each, that's $50K/month.</span></span> of Being Behind
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="monthlyRevenueImpact" value="50000" min="0" step="5000">
+                                    <div class="help-text">Lost deals, slower growth, customer churn per month you're behind. Multiply Competitive Delay × This = Total Cost.</div>
+                                </div>
+
+                                <div class="form-group input-prefix">
+                                    <label for="exitCostBuild">
+                                        <span class="tooltip">Exit Cost: Build<span class="tooltiptext">What if your homegrown tool sucks after 2 years? Cost to migrate away: engineering time, data cleanup, system rewrites, downtime while transitioning. Usually HIGHER than buying.</span></span> (Switch Later)
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="exitCostBuild" value="60000" min="0" step="10000">
+                                    <div class="help-text">Cost to migrate away if your build sucks</div>
+                                </div>
+
+                                <div class="form-group input-prefix">
+                                    <label for="exitCostBuy">
+                                        <span class="tooltip">Exit Cost: Buy<span class="tooltiptext">Vendor lock-in cost. If you switch SaaS vendors later: export data, integrate new tool, train team. Usually LOWER than migrating away from a custom build.</span></span> (Vendor Lock-in)
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="exitCostBuy" value="20000" min="0" step="5000">
+                                    <div class="help-text">Cost to export data and switch vendors</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="featureCompleteness">
+                                        <span class="tooltip">Feature Completeness<span class="tooltiptext">Be honest: Will v1 have ALL the features you need? Or just 60%? SaaS tools are usually 90%+ complete on day 1. Your build? Maybe 50-70% in v1, then "we'll add that later" (spoiler: you won't).</span></span>: Build (%)
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="featureCompleteness" value="60" min="0" max="100" step="5">
+                                    <div class="help-text">What % of needed features will v1 actually have?</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="maintenanceWorst">
+                                        <span class="tooltip">Worst-Case Maintenance<span class="tooltiptext">When everything goes wrong: bugs pile up, feature requests flood in, the original builder quits, and suddenly you're spending 40+ hours/month just keeping this thing alive instead of the optimistic 10 hours you planned.</span></span> Hours/Month
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="maintenanceWorst" value="40" min="0" step="5">
+                                    <div class="help-text">When things break, feature requests pile up, etc.</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="timeToValueWorst">
+                                        <span class="tooltip">Worst-Case Build Time<span class="tooltiptext">Everything goes wrong scenario: scope creep, bugs you didn't expect, 3 rewrites, integration hell. You estimated 6 months but it takes 12. This is the "Murphy's Law" timeline.</span></span> (months)
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input type="number" id="timeToValueWorst" value="12" min="0" step="1">
+                                    <div class="help-text">When everything goes wrong (scope creep, bugs, etc.)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group" style="grid-column: 1 / -1;">
+                    <button class="btn-primary" onclick="calculate()">Calculate</button>
+                    <button class="btn-secondary" onclick="window.print()">Print / Export PDF</button>
+                    <button class="btn-secondary" onclick="reset()">Reset</button>
+                    <button class="btn-secondary" onclick="toggleExamples()" style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); color: white; border: none;">💡 Real Examples</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results">
+                <div class="section">
+                    <h2>Results</h2>
+
+                    <div class="result-card">
+                        <h3>Build: Year 1 Total</h3>
+                        <div class="amount" id="buildYear1">$0</div>
+                        <div class="detail" id="buildBreakdown"></div>
+                    </div>
+
+                    <div class="result-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <h3>Buy: Year 1 Total</h3>
+                        <div class="amount" id="buyYear1">$0</div>
+                        <div class="detail" id="buyBreakdown"></div>
+                    </div>
+                </div>
+
+                <div class="comparison">
+                    <h3>3-Year <span class="tooltip">TCO<span class="tooltiptext">Total Cost of Ownership = ALL costs over 3 years, not just the sticker price. Includes maintenance, support, compliance, opportunity cost, etc.</span></span> (Total Cost of Ownership)</h3>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 16px; margin-top: -8px;">What you'll actually spend over 3 years when you add up everything</p>
+                    <div class="comparison-item">
+                        <span class="label">Build (3 years)</span>
+                        <span class="value" id="build3Year">$0</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span class="label">Buy (3 years)</span>
+                        <span class="value" id="buy3Year">$0</span>
+                    </div>
+                    <div class="comparison-item" style="font-size: 18px;">
+                        <span class="label">Difference</span>
+                        <span class="value" id="difference" style="font-size: 20px;">$0</span>
+                    </div>
+                </div>
+
+                <div class="chart">
+                    <h3 style="margin-bottom: 16px; font-size: 18px;">Cost Visualization</h3>
+                    <div class="bar">
+                        <div class="bar-label">Year 1</div>
+                        <div class="bar-track">
+                            <div class="bar-fill build" id="barYear1" style="width: 50%;">Build</div>
+                        </div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label"></div>
+                        <div class="bar-track">
+                            <div class="bar-fill" id="barYear1Buy" style="width: 30%;">Buy</div>
+                        </div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">3 Years</div>
+                        <div class="bar-track">
+                            <div class="bar-fill build" id="bar3Year" style="width: 40%;">Build</div>
+                        </div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label"></div>
+                        <div class="bar-track">
+                            <div class="bar-fill" id="bar3YearBuy" style="width: 60%;">Buy</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recommendation" id="recommendation">
+                    <h3>Recommendation: <span id="recommendationTitle">Calculate to see recommendation</span></h3>
+                    <p id="recommendationText">Enter your costs above and click Calculate to get a recommendation.</p>
+                    <ul id="recommendationReasons" style="display: none;"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real Examples Section -->
+        <div id="realExamples" style="display: none; padding: 40px; background: #f8f9fa; border-top: 4px solid #ff9800;">
+            <h2 style="text-align: center; font-size: 32px; margin-bottom: 32px; color: #000;">Real-World Examples: What Building Actually Costs</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto;">
+
+                <!-- Example 1: Testing Tool -->
+                <div style="background: white; padding: 24px; border-radius: 12px; border: 2px solid #e1e4e8; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <h3 style="font-size: 24px; margin-bottom: 16px; color: #f44336;">❌ Example 1: Custom Testing Framework</h3>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">"We'll build our own Selenium/Cypress - how hard can it be?"</p>
+
+                    <div style="background: #ffebee; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="font-size: 16px; margin-bottom: 8px; color: #000;">BUILD Costs:</h4>
+                        <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8;">
+                            <li><strong>Initial:</strong> 12 engineer-months × $15K = $180K</li>
+                            <li><strong>Year 1 maintenance:</strong> $60K (browser updates, bugs)</li>
+                            <li><strong>Support burden:</strong> $36K (teaching everyone how to use it)</li>
+                            <li><strong>Compliance/Security:</strong> $20K (CI/CD integration, reporting)</li>
+                            <li><strong>Year 3 scale issues:</strong> $80K (parallelization, flaky tests)</li>
+                        </ul>
+                        <p style="margin-top: 12px; font-size: 18px; font-weight: 700; color: #f44336;">3-Year Total: $456K</p>
+                    </div>
+
+                    <div style="background: #e8f5e9; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="font-size: 16px; margin-bottom: 8px; color: #000;">BUY Costs:</h4>
+                        <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8;">
+                            <li><strong>Playwright/Cypress:</strong> Free + open source</li>
+                            <li><strong>GitHub Actions CI:</strong> $5K/year</li>
+                            <li><strong>Browserstack (optional):</strong> $12K/year</li>
+                        </ul>
+                        <p style="margin-top: 12px; font-size: 18px; font-weight: 700; color: #4caf50;">3-Year Total: $51K</p>
+                    </div>
+
+                    <div style="background: #fff3e0; padding: 12px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <p style="font-size: 13px; margin-bottom: 8px;"><strong>What Actually Happened:</strong></p>
+                        <p style="font-size: 13px; line-height: 1.6;">Company built custom framework. 8 months in, Chrome updated and broke everything. Senior engineer who built it quit. New hire spent 3 months trying to understand the codebase. Eventually abandoned it and switched to Playwright.</p>
+                        <p style="font-size: 13px; line-height: 1.6; margin-top: 8px;"><strong>Meanwhile:</strong> Competitors using Playwright shipped 12 product features in those 14 months. This company shipped 4 (QA team was blocked waiting for the tool).</p>
+                        <p style="font-size: 14px; font-weight: 700; margin-top: 8px; color: #f44336;">Wasted: $240K + 14 months + lost market velocity</p>
+                    </div>
+                </div>
+
+                <!-- Example 2: Internal CRM -->
+                <div style="background: white; padding: 24px; border-radius: 12px; border: 2px solid #e1e4e8; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <h3 style="font-size: 24px; margin-bottom: 16px; color: #f44336;">❌ Example 2: Internal CRM</h3>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">"Sales wants one small feature Salesforce doesn't have - let's build our own!"</p>
+
+                    <div style="background: #ffebee; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="font-size: 16px; margin-bottom: 8px; color: #000;">BUILD Costs:</h4>
+                        <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8;">
+                            <li><strong>Initial:</strong> 24 engineer-months × $15K = $360K</li>
+                            <li><strong>Year 1 maintenance:</strong> $120K (endless feature requests)</li>
+                            <li><strong>Support:</strong> $60K (sales rep questions 24/7)</li>
+                            <li><strong>Integrations:</strong> $80K (email, calendar, Slack, etc.)</li>
+                            <li><strong>Mobile app:</strong> $100K (sales wants it on iPhone)</li>
+                            <li><strong>Compliance:</strong> $40K (GDPR, data retention)</li>
+                        </ul>
+                        <p style="margin-top: 12px; font-size: 18px; font-weight: 700; color: #f44336;">3-Year Total: $880K</p>
+                    </div>
+
+                    <div style="background: #e8f5e9; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="font-size: 16px; margin-bottom: 8px; color: #000;">BUY Costs:</h4>
+                        <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8;">
+                            <li><strong>HubSpot Professional:</strong> 10 seats × $500/mo = $60K/year</li>
+                            <li><strong>Custom workflow automation:</strong> $5K setup</li>
+                            <li><strong>Training:</strong> $3K (once)</li>
+                        </ul>
+                        <p style="margin-top: 12px; font-size: 18px; font-weight: 700; color: #4caf50;">3-Year Total: $188K</p>
+                    </div>
+
+                    <div style="background: #fff3e0; padding: 12px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <p style="font-size: 13px; margin-bottom: 8px;"><strong>What Actually Happened:</strong></p>
+                        <p style="font-size: 13px; line-height: 1.6;">Built MVP in 10 months. Sales used it for 3 months. Then: "Can we add mobile?" "Can we integrate with our email?" "Can we get reporting like Salesforce has?" Feature requests never stopped. After 18 months, switched to HubSpot. Sales team celebrated.</p>
+                        <p style="font-size: 13px; line-height: 1.6; margin-top: 8px;"><strong>Team Impact:</strong> Pulled 2 senior engineers off product features for 10 months. Didn't hire more (budget constraints). Product roadmap delayed 2 quarters.</p>
+                        <p style="font-size: 13px; line-height: 1.6; margin-top: 4px;"><strong>Market Impact:</strong> Competitor shipped AI features + mobile app while this team built a CRM. Lost 3 enterprise deals to competitor's "more modern platform."</p>
+                        <p style="font-size: 14px; font-weight: 700; margin-top: 8px; color: #f44336;">Wasted: $480K + 18 months + 3 lost deals ($450K ARR) + market positioning</p>
+                    </div>
+                </div>
+
+                <!-- Example 3: AI Sales SDR -->
+                <div style="background: white; padding: 24px; border-radius: 12px; border: 2px solid #e1e4e8; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <h3 style="font-size: 24px; margin-bottom: 16px; color: #f44336;">❌ Example 3: AI Sales SDR Tool</h3>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">"AI makes this easy - we'll build our own Outreach/Apollo!"</p>
+
+                    <div style="background: #ffebee; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="font-size: 16px; margin-bottom: 8px; color: #000;">BUILD Costs:</h4>
+                        <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8;">
+                            <li><strong>Initial:</strong> 18 engineer-months × $15K = $270K</li>
+                            <li><strong>Data vendor:</strong> $60K/year (ZoomInfo/Apollo access)</li>
+                            <li><strong>AI API costs:</strong> $40K/year (Claude/GPT-4 at scale)</li>
+                            <li><strong>Email infrastructure:</strong> $30K/year (deliverability, IPs)</li>
+                            <li><strong>Compliance lawyer:</strong> $25K (CAN-SPAM, GDPR)</li>
+                            <li><strong>Maintenance:</strong> $80K/year (email warmup, deliverability tuning)</li>
+                        </ul>
+                        <p style="margin-top: 12px; font-size: 18px; font-weight: 700; color: #f44336;">3-Year Total: $900K</p>
+                    </div>
+
+                    <div style="background: #e8f5e9; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="font-size: 16px; margin-bottom: 8px; color: #000;">BUY Costs:</h4>
+                        <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8;">
+                            <li><strong>Apollo.io:</strong> $15K/year (data + automation)</li>
+                            <li><strong>Clay:</strong> $8K/year (AI enrichment)</li>
+                            <li><strong>Instantly.ai:</strong> $6K/year (email warmup)</li>
+                            <li><strong>Setup/training:</strong> $5K (once)</li>
+                        </ul>
+                        <p style="margin-top: 12px; font-size: 18px; font-weight: 700; color: #4caf50;">3-Year Total: $92K</p>
+                    </div>
+
+                    <div style="background: #fff3e0; padding: 12px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <p style="font-size: 13px; margin-bottom: 8px;"><strong>What Actually Happened:</strong></p>
+                        <p style="font-size: 13px; line-height: 1.6;">Built AI SDR tool using GPT-4. Worked great in testing. Production launch: emails went to spam. Spent 4 months fixing deliverability. Data quality issues. Unsubscribe handling broken. Compliance risks. Legal got involved. Project paused "temporarily" after 14 months. Now using Apollo + Clay.</p>
+                        <p style="font-size: 13px; line-height: 1.6; margin-top: 8px;"><strong>Team Burn:</strong> Only had 6 engineers total. 2 worked on this (33% of eng capacity). Couldn't hire more fast enough. Product velocity dropped 40%. Eng team burnout from context switching.</p>
+                        <p style="font-size: 13px; line-height: 1.6; margin-top: 4px;"><strong>Market Reality:</strong> While building this, 3 competitors launched with Apollo + Clay in 2 weeks. Their SDRs were already booking meetings. This company's SDRs? Still waiting for the "tool" to be ready.</p>
+                        <p style="font-size: 14px; font-weight: 700; margin-top: 8px; color: #f44336;">Wasted: $470K + 14 months + team burnout + 14 months of competitive disadvantage</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div style="max-width: 1200px; margin: 40px auto 0; background: white; padding: 32px; border-radius: 12px; border: 3px solid #f44336;">
+                <h3 style="font-size: 24px; margin-bottom: 16px; text-align: center; color: #000;">The Pattern</h3>
+
+                <!-- THE BIG QUESTION -->
+                <div style="background: #ffebee; padding: 20px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #f44336;">
+                    <h4 style="font-size: 18px; margin-bottom: 12px; color: #f44336;">The Question You're Not Asking:</h4>
+                    <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+                        <strong>Do you have spare engineering capacity?</strong>
+                    </p>
+                    <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8;">
+                        <li><strong>If YES:</strong> You can hire more engineers → Maybe building makes sense (but are you hiring fast enough?)</li>
+                        <li><strong>If NO:</strong> You're pulling engineers OFF product features → Competitors ship faster → You lose market share</li>
+                    </ul>
+                    <p style="font-size: 16px; line-height: 1.8; margin-top: 16px; font-weight: 600;">
+                        While you build an internal tool for 12 months, your competitor using SaaS ships 20 product features. Who wins the market?
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 12px; color: #f44336;">Why "Build" Always Costs More</h4>
+                        <ul style="margin-left: 20px; font-size: 14px; line-height: 2;">
+                            <li><strong>Team capacity drain</strong> - Engineers pulled off product</li>
+                            <li><strong>Competitive disadvantage</strong> - Rivals ship faster</li>
+                            <li><strong>Market share loss</strong> - Behind on features that matter</li>
+                            <li>You underestimate maintenance (it compounds)</li>
+                            <li>Feature creep is inevitable</li>
+                            <li>People quit, knowledge leaves</li>
+                            <li>Third-party integrations are a nightmare</li>
+                            <li>Compliance catches you off guard</li>
+                            <li>Every browser/OS update breaks something</li>
+                            <li>Support burden falls on engineering</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 12px; color: #4caf50;">Why "Buy" Actually Wins</h4>
+                        <ul style="margin-left: 20px; font-size: 14px; line-height: 2;">
+                            <li><strong>No team capacity burned</strong> - Engineers stay on product</li>
+                            <li><strong>Market velocity maintained</strong> - Ship features competitors don't have</li>
+                            <li><strong>Competitive parity in 2 weeks</strong> - Not 14 months</li>
+                            <li>SaaS vendors eat maintenance costs</li>
+                            <li>Features ship without your team building them</li>
+                            <li>Integrations already exist</li>
+                            <li>Compliance is their problem</li>
+                            <li>Support is their job, not yours</li>
+                            <li>You can switch vendors if it sucks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 32px; padding: 20px; background: #fff3e0; border-radius: 8px;">
+                    <p style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Average savings by buying instead of building:</p>
+                    <p style="font-size: 42px; font-weight: 700; color: #f44336;">$405,000 per tool</p>
+                    <p style="font-size: 14px; color: #666; margin-top: 8px;">Based on 3-year <span class="tooltip">TCO<span class="tooltiptext">Total Cost of Ownership = everything you'll spend over 3 years (not just initial cost)</span></span> across the examples above</p>
+                    <p style="font-size: 16px; font-weight: 600; margin-top: 16px; color: #f44336;">+ Lost market opportunities from 12-18 months of slower product velocity</p>
+                </div>
+            </div>
+
+            <!-- The Real Cost -->
+            <div style="max-width: 1200px; margin: 24px auto 0; background: #1a1a1a; padding: 32px; border-radius: 12px; color: white;">
+                <h3 style="font-size: 24px; margin-bottom: 16px; text-align: center; color: #fff;">The Hidden Cost Nobody Tracks</h3>
+                <div style="font-size: 16px; line-height: 1.8; text-align: center;">
+                    <p style="margin-bottom: 16px;">
+                        You spend $500K building an internal tool over 14 months.
+                    </p>
+                    <p style="margin-bottom: 16px;">
+                        Your competitor spends $50K on SaaS, deploys in 2 weeks.
+                    </p>
+                    <p style="margin-bottom: 16px; font-size: 18px; font-weight: 700; color: #ff9800;">
+                        They use those 14 months to ship features you don't have.
+                    </p>
+                    <p style="margin-bottom: 16px;">
+                        They win deals. You're still "working on it."
+                    </p>
+                    <p style="font-size: 20px; font-weight: 700; margin-top: 24px; color: #f44336;">
+                        The real cost isn't the $500K. It's the market share you lost while building a tool that already existed.
+                    </p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 32px;">
+                <button class="btn-secondary" onclick="toggleExamples()" style="padding: 16px 32px; font-size: 18px;">Close Examples</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>Created by <a href="https://yoursubstack.com" target="_blank">Sorina Weber</a> | 2026</p>
+            <p style="margin-top: 8px;">Share this calculator: <span id="shareLink">https://yourusername.github.io/build-vs-buy-calculator</span></p>
+        </footer>
+    </div>
+
+    <script>
+        // Auto-calculate on input change
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        // Calculate on page load
+        window.addEventListener('load', calculate);
+
+        function toggleAdvanced() {
+            const fields = document.getElementById('advancedFields');
+            const toggle = document.getElementById('advancedToggle');
+            if (fields.style.display === 'none') {
+                fields.style.display = 'block';
+                toggle.textContent = '(Hide)';
+            } else {
+                fields.style.display = 'none';
+                toggle.textContent = '(Show)';
+            }
+        }
+
+        function toggleExamples() {
+            const examples = document.getElementById('realExamples');
+            if (examples.style.display === 'none') {
+                examples.style.display = 'block';
+                // Scroll to examples
+                examples.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                examples.style.display = 'none';
+                // Scroll back to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function calculate() {
+            // Get basic inputs
+            const engineerMonths = parseFloat(document.getElementById('engineerMonths').value) || 0;
+            const engineerCost = parseFloat(document.getElementById('engineerCost').value) || 0;
+            const maintenanceHours = parseFloat(document.getElementById('maintenanceHours').value) || 0;
+            const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+            const opportunityCost = parseFloat(document.getElementById('opportunityCost').value) || 0;
+            const hiddenCosts = parseFloat(document.getElementById('hiddenCosts').value) || 0;
+            const saasAnnual = parseFloat(document.getElementById('saasAnnual').value) || 0;
+            const implementation = parseFloat(document.getElementById('implementation').value) || 0;
+            const timeToValueBuild = parseFloat(document.getElementById('timeToValueBuild').value) || 0;
+            const timeToValueBuy = parseFloat(document.getElementById('timeToValueBuy').value) || 0;
+
+            // Get advanced inputs
+            const failureRisk = parseFloat(document.getElementById('failureRisk').value) || 0;
+            const overrunCost = parseFloat(document.getElementById('overrunCost').value) || 0;
+            const busFactor = parseFloat(document.getElementById('busFactor').value) || 0;
+            const supportHours = parseFloat(document.getElementById('supportHours').value) || 0;
+            const complianceCost = parseFloat(document.getElementById('complianceCost').value) || 0;
+            const scaleCost = parseFloat(document.getElementById('scaleCost').value) || 0;
+            const velocityImpact = parseFloat(document.getElementById('velocityImpact').value) || 0;
+            const hiringCost = parseFloat(document.getElementById('hiringCost').value) || 0;
+            const competitiveDelay = parseFloat(document.getElementById('competitiveDelay').value) || 0;
+            const monthlyRevenueImpact = parseFloat(document.getElementById('monthlyRevenueImpact').value) || 0;
+            const exitCostBuild = parseFloat(document.getElementById('exitCostBuild').value) || 0;
+            const exitCostBuy = parseFloat(document.getElementById('exitCostBuy').value) || 0;
+            const featureCompleteness = parseFloat(document.getElementById('featureCompleteness').value) || 100;
+            const maintenanceWorst = parseFloat(document.getElementById('maintenanceWorst').value) || maintenanceHours;
+            const timeToValueWorst = parseFloat(document.getElementById('timeToValueWorst').value) || timeToValueBuild;
+
+            // Calculate Build Costs - BASE CASE
+            const buildInitial = engineerMonths * engineerCost + hiringCost;
+            const maintenanceAnnual = maintenanceHours * 12 * hourlyRate;
+            const supportAnnual = supportHours * 12 * hourlyRate;
+
+            // Expected value of failure risk
+            const expectedOverrun = (failureRisk / 100) * overrunCost;
+            const busFactor33Percent = busFactor * 0.33; // 33% chance someone quits
+
+            // Velocity impact on other team members (lost productivity)
+            const velocityCost = (velocityImpact / 100) * opportunityCost;
+
+            // Competitive disadvantage cost (months behind × monthly revenue impact)
+            const competitiveCost = competitiveDelay * monthlyRevenueImpact;
+
+            const buildYear1Base = buildInitial + maintenanceAnnual + supportAnnual +
+                                   opportunityCost + hiddenCosts + complianceCost +
+                                   expectedOverrun + busFactor33Percent + velocityCost +
+                                   competitiveCost;
+
+            const build3YearBase = buildYear1Base + (maintenanceAnnual * 2) +
+                                   (supportAnnual * 2) + (complianceCost * 2);
+
+            // Calculate Build Costs - WORST CASE
+            const maintenanceAnnualWorst = maintenanceWorst * 12 * hourlyRate;
+            const competitiveCostWorst = (timeToValueWorst / timeToValueBuild) * competitiveCost; // Worse if takes longer
+
+            const buildYear1Worst = buildInitial + maintenanceAnnualWorst + supportAnnual +
+                                    opportunityCost + hiddenCosts + complianceCost +
+                                    overrunCost + busFactor + velocityCost + scaleCost +
+                                    competitiveCostWorst;
+
+            const build3YearWorst = buildYear1Worst + (maintenanceAnnualWorst * 2) +
+                                    (supportAnnual * 2) + (complianceCost * 2) + exitCostBuild;
+
+            // Calculate Buy Costs
+            const buyYear1 = saasAnnual + implementation;
+            const buy3Year = (saasAnnual * 3) + implementation;
+            const buy3YearWithExit = buy3Year + exitCostBuy;
+
+            // Display results - show realistic (base) case
+            document.getElementById('buildYear1').textContent = formatCurrency(buildYear1Base);
+
+            let breakdownText = `Initial: ${formatCurrency(buildInitial)} + Maintenance: ${formatCurrency(maintenanceAnnual)}`;
+            if (supportAnnual > 0) breakdownText += ` + Support: ${formatCurrency(supportAnnual)}`;
+            if (opportunityCost > 0) breakdownText += ` + Opportunity: ${formatCurrency(opportunityCost)}`;
+            if (expectedOverrun > 0) breakdownText += ` + Risk-Adjusted Overrun: ${formatCurrency(expectedOverrun)}`;
+            if (competitiveCost > 0) breakdownText += ` + Competitive Loss: ${formatCurrency(competitiveCost)}`;
+
+            document.getElementById('buildBreakdown').textContent = breakdownText;
+
+            document.getElementById('buyYear1').textContent = formatCurrency(buyYear1);
+            document.getElementById('buyBreakdown').textContent =
+                `Annual: ${formatCurrency(saasAnnual)}${implementation > 0 ? ' + Setup: ' + formatCurrency(implementation) : ''}`;
+
+            document.getElementById('build3Year').textContent = formatCurrency(build3YearBase);
+            document.getElementById('buy3Year').textContent = formatCurrency(buy3Year);
+
+            const difference = build3YearBase - buy3Year;
+            const diffEl = document.getElementById('difference');
+            diffEl.textContent = formatCurrency(Math.abs(difference));
+            diffEl.style.color = difference > 0 ? '#4caf50' : '#f44336';
+
+            // Update chart
+            const maxCost = Math.max(buildYear1Base, buildYear1Worst, buyYear1, build3YearBase, build3YearWorst, buy3Year);
+            document.getElementById('barYear1').style.width = (buildYear1Base / maxCost * 100) + '%';
+            document.getElementById('barYear1Buy').style.width = (buyYear1 / maxCost * 100) + '%';
+            document.getElementById('bar3Year').style.width = (build3YearBase / maxCost * 100) + '%';
+            document.getElementById('bar3YearBuy').style.width = (buy3Year / maxCost * 100) + '%';
+
+            // Generate recommendation
+            generateRecommendation({
+                buildYear1: buildYear1Base,
+                buildYear1Worst,
+                buyYear1,
+                build3Year: build3YearBase,
+                build3YearWorst,
+                buy3Year,
+                difference,
+                timeToValueBuild,
+                timeToValueBuy,
+                timeToValueWorst,
+                opportunityCost,
+                maintenanceAnnual,
+                failureRisk,
+                featureCompleteness,
+                velocityImpact,
+                competitiveDelay
+            });
+        }
+
+        function generateRecommendation(data) {
+            const recBox = document.getElementById('recommendation');
+            const recTitle = document.getElementById('recommendationTitle');
+            const recText = document.getElementById('recommendationText');
+            const recReasons = document.getElementById('recommendationReasons');
+
+            const reasons = [];
+            let recommendation = '';
+            let warningText = '';
+
+            // Worst-case scenario check
+            const worstCaseMultiplier = data.buildYear1Worst / data.buildYear1;
+            const isHighRisk = data.failureRisk > 50 || worstCaseMultiplier > 1.5;
+
+            // Determine recommendation with advanced logic
+            if (data.buyYear1 < data.buildYear1 && data.buy3Year < data.build3Year) {
+                recommendation = 'BUY';
+                recBox.style.background = '#e8f5e9';
+                recBox.style.borderColor = '#4caf50';
+
+                reasons.push(`Lower Year 1 cost: Save ${formatCurrency(data.buildYear1 - data.buyYear1)}`);
+                reasons.push(`Lower 3-year total cost: Save ${formatCurrency(data.build3Year - data.buy3Year)}`);
+
+                if (data.timeToValueBuy > 0 && data.timeToValueBuild > 0) {
+                    const speedAdvantage = (data.timeToValueBuild - (data.timeToValueBuy / 4.33)).toFixed(1);
+                    if (speedAdvantage > 0) {
+                        reasons.push(`${speedAdvantage} months faster to value`);
+                    }
+                }
+
+                if (data.maintenanceAnnual > 0) {
+                    reasons.push(`Eliminates ${formatCurrency(data.maintenanceAnnual)}/year ongoing maintenance`);
+                }
+
+                if (data.featureCompleteness < 80) {
+                    reasons.push(`Your build only gives ${data.featureCompleteness}% of needed features`);
+                }
+
+                if (isHighRisk) {
+                    reasons.push(`High failure risk (${data.failureRisk}%) - worst case costs ${formatCurrency(data.buildYear1Worst)}`);
+                }
+
+                recText.textContent = 'Buying is the clear winner. Lower costs, faster deployment, zero maintenance. Buying lets your team focus on actual product features instead of reinventing wheels.';
+
+            } else if (data.build3Year < data.buy3Year) {
+                // Build is cheaper but we need to check risk factors
+                if (isHighRisk || data.velocityImpact > 20 || data.competitiveDelay > 3) {
+                    recommendation = 'BUY (despite TCO)';
+                    recBox.style.background = '#fff3e0';
+                    recBox.style.borderColor = '#ff9800';
+
+                    if (isHighRisk) {
+                        reasons.push(`⚠️ ${data.failureRisk}% chance build goes over budget - worst case: ${formatCurrency(data.buildYear1Worst)}`);
+                    }
+
+                    if (data.velocityImpact > 20) {
+                        reasons.push(`⚠️ ${data.velocityImpact}% team velocity loss while building this`);
+                    }
+
+                    if (data.competitiveDelay > 3) {
+                        reasons.push(`⚠️ ${data.competitiveDelay} months behind competitors who bought SaaS`);
+                    }
+
+                    if (data.featureCompleteness < 70) {
+                        reasons.push(`⚠️ Your v1 only delivers ${data.featureCompleteness}% of needed features`);
+                    }
+
+                    recText.textContent = `Build is cheaper on paper (saves ${formatCurrency(data.buy3Year - data.build3Year)} over 3 years), BUT the risk factors make it a bad bet. Your worst-case scenario costs ${formatCurrency(data.build3YearWorst)} - way more than buying.`;
+
+                } else {
+                    recommendation = 'BUILD (maybe)';
+                    recBox.style.background = '#fff3e0';
+                    recBox.style.borderColor = '#ff9800';
+
+                    reasons.push(`Lower 3-year total cost: Save ${formatCurrency(data.buy3Year - data.build3Year)}`);
+
+                    if (data.timeToValueBuild < 6) {
+                        reasons.push('Reasonable time to value (<6 months)');
+                    }
+
+                    if (data.featureCompleteness >= 80) {
+                        reasons.push(`Good feature completeness (${data.featureCompleteness}%)`);
+                    }
+
+                    warningText = `Worst case: ${formatCurrency(data.buildYear1Worst)} Year 1. Before you build, ask: Is this your core competency? Can you handle ${data.timeToValueWorst} months if it goes wrong?`;
+
+                    recText.textContent = `Building could save money long-term. BUT: ${warningText}`;
+                }
+
+            } else {
+                recommendation = 'BUY';
+                recBox.style.background = '#e8f5e9';
+                recBox.style.borderColor = '#4caf50';
+
+                if (data.opportunityCost > 0) {
+                    reasons.push(`Opportunity cost alone (${formatCurrency(data.opportunityCost)}) kills the build case`);
+                }
+
+                if (data.timeToValueBuy > 0 && data.timeToValueBuild > 0) {
+                    const months = (data.timeToValueBuild - (data.timeToValueBuy / 4.33)).toFixed(1);
+                    reasons.push(`${months} months faster to market`);
+                }
+
+                reasons.push('Costs are close, but buying eliminates execution risk');
+
+                if (data.velocityImpact > 0) {
+                    reasons.push(`Avoids ${data.velocityImpact}% team velocity hit`);
+                }
+
+                recText.textContent = 'Buy. Even though 3-year costs are similar, buying eliminates execution risk, maintenance hell, and gets you to market faster. Unless this is core IP that differentiates you, buy.';
+            }
+
+            recTitle.textContent = recommendation;
+            recReasons.innerHTML = reasons.map(r => `<li>${r}</li>`).join('');
+            recReasons.style.display = 'block';
+        }
+
+        function calculateBreakEven(data) {
+            if (data.maintenanceAnnual === 0) return 'Never';
+            const breakEven = (data.buildYear1 - data.buyYear1) / (data.saasAnnual - data.maintenanceAnnual);
+            return breakEven > 0 ? breakEven.toFixed(1) : 'Never';
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function reset() {
+            // Basic fields
+            document.getElementById('engineerMonths').value = 6;
+            document.getElementById('engineerCost').value = 15000;
+            document.getElementById('maintenanceHours').value = 20;
+            document.getElementById('hourlyRate').value = 150;
+            document.getElementById('opportunityCost').value = 200000;
+            document.getElementById('hiddenCosts').value = 10000;
+            document.getElementById('saasAnnual').value = 120000;
+            document.getElementById('implementation').value = 10000;
+            document.getElementById('timeToValueBuild').value = 6;
+            document.getElementById('timeToValueBuy').value = 2;
+
+            // Advanced fields
+            document.getElementById('failureRisk').value = 30;
+            document.getElementById('overrunCost').value = 50000;
+            document.getElementById('busFactor').value = 30000;
+            document.getElementById('supportHours').value = 10;
+            document.getElementById('complianceCost').value = 15000;
+            document.getElementById('scaleCost').value = 40000;
+            document.getElementById('velocityImpact').value = 15;
+            document.getElementById('hiringCost').value = 0;
+            document.getElementById('competitiveDelay').value = 5;
+            document.getElementById('monthlyRevenueImpact').value = 50000;
+            document.getElementById('exitCostBuild').value = 60000;
+            document.getElementById('exitCostBuy').value = 20000;
+            document.getElementById('featureCompleteness').value = 60;
+            document.getElementById('maintenanceWorst').value = 40;
+            document.getElementById('timeToValueWorst').value = 12;
+
+            calculate();
+        }
+    </script>
+</body>
+</html>
