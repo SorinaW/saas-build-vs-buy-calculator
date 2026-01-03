@@ -1129,7 +1129,7 @@
 
             // Worst-case scenario check
             const worstCaseMultiplier = data.buildYear1Worst / data.buildYear1;
-            const isHighRisk = data.failureRisk > 50 || worstCaseMultiplier > 1.5;
+            const isHighRisk = data.failureRisk > 60 || worstCaseMultiplier > 2.0;
 
             // Determine recommendation with advanced logic
             if (data.buyYear1 < data.buildYear1 && data.buy3Year < data.build3Year) {
@@ -1163,20 +1163,30 @@
 
             } else if (data.build3Year < data.buy3Year) {
                 // Build is cheaper but we need to check risk factors
-                if (isHighRisk || data.velocityImpact > 20 || data.competitiveDelay > 3) {
+                // Only override if worst-case actually costs more than BUY OR multiple severe risk factors
+                const worstCaseExceedsBuy = data.build3YearWorst > data.buy3Year;
+                const severeRisks = (isHighRisk && data.velocityImpact > 30) ||
+                                   (data.velocityImpact > 30 && data.competitiveDelay > 9) ||
+                                   (isHighRisk && data.competitiveDelay > 9);
+
+                if (worstCaseExceedsBuy || severeRisks) {
                     recommendation = 'BUY (despite TCO)';
                     recBox.style.background = '#fff3e0';
                     recBox.style.borderColor = '#ff9800';
 
-                    if (isHighRisk) {
-                        reasons.push(`⚠️ ${data.failureRisk}% chance build goes over budget - worst case: ${formatCurrency(data.buildYear1Worst)}`);
+                    if (worstCaseExceedsBuy) {
+                        reasons.push(`⚠️ Worst-case scenario (${formatCurrency(data.build3YearWorst)}) exceeds buying cost (${formatCurrency(data.buy3Year)})`);
                     }
 
-                    if (data.velocityImpact > 20) {
+                    if (isHighRisk) {
+                        reasons.push(`⚠️ ${data.failureRisk}% chance build goes over budget - worst case: ${formatCurrency(data.buildYear1Worst)} Year 1`);
+                    }
+
+                    if (data.velocityImpact > 30) {
                         reasons.push(`⚠️ ${data.velocityImpact}% team velocity loss while building this`);
                     }
 
-                    if (data.competitiveDelay > 3) {
+                    if (data.competitiveDelay > 9) {
                         reasons.push(`⚠️ ${data.competitiveDelay} months behind competitors who bought SaaS`);
                     }
 
@@ -1222,7 +1232,7 @@
 
                 reasons.push('Costs are close, but buying eliminates execution risk');
 
-                if (data.velocityImpact > 0) {
+                if (data.velocityImpact > 20) {
                     reasons.push(`Avoids ${data.velocityImpact}% team velocity hit`);
                 }
 
