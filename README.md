@@ -2,7 +2,7 @@
 
 Interactive web calculator to help CTOs and engineering leaders make data-driven decisions about building vs buying software tools.
 
-**Live Demo:** `https://yourusername.github.io/build-vs-buy-calculator`
+**Live Demo:** `https://sorinaw.github.io/saas-build-vs-buy-calculator`
 
 ## Features
 
@@ -21,7 +21,7 @@ Interactive web calculator to help CTOs and engineering leaders make data-driven
 
 1. **Create a new repository:**
    - Go to https://github.com/new
-   - Name: `build-vs-buy-calculator`
+   - Name: `saas-build-vs-buy-calculator`
    - Public
    - Click "Create repository"
 
@@ -37,7 +37,7 @@ Interactive web calculator to help CTOs and engineering leaders make data-driven
    - Click Save
 
 4. **Done!**
-   - Your calculator will be live at: `https://yourusername.github.io/build-vs-buy-calculator`
+   - Your calculator will be live at: `https://sorinaw.github.io/saas-build-vs-buy-calculator`
    - Takes 2-3 minutes to deploy
 
 ### Alternative: Deploy with Git
@@ -48,7 +48,7 @@ git init
 git add index.html README.md
 git commit -m "Initial commit: Build vs Buy Calculator"
 git branch -M main
-git remote add origin https://github.com/yourusername/build-vs-buy-calculator.git
+git remote add origin https://github.com/SorinaW/saas-build-vs-buy-calculator.git
 git push -u origin main
 ```
 
@@ -139,7 +139,7 @@ Add before `</head>`:
 Once deployed, share the link:
 
 ```
-https://yourusername.github.io/build-vs-buy-calculator
+https://sorinaw.github.io/saas-build-vs-buy-calculator
 ```
 
 **Pro tip:** Create a short link with bit.ly or your own domain!
@@ -240,4 +240,4 @@ Based on the "Build vs Buy" framework for engineering decision-making.
 
 ---
 
-**Deploy yours in 5 minutes:** https://github.com/yourusername/build-vs-buy-calculator
+**Deploy yours in 5 minutes:** https://github.com/SorinaW/saas-build-vs-buy-calculator
