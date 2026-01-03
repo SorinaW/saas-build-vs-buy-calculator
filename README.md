@@ -2,7 +2,7 @@
 
 Interactive web calculator to help CTOs and engineering leaders make data-driven decisions about building vs buying software tools.
 
-**Live Demo:** `https://sorinaw.github.io/saas-build-vs-buy-calculator`
+**[🔗 Live Demo](https://sorinaw.github.io/saas-build-vs-buy-calculator)**
 
 ## Features
 
@@ -37,7 +37,7 @@ Interactive web calculator to help CTOs and engineering leaders make data-driven
    - Click Save
 
 4. **Done!**
-   - Your calculator will be live at: `https://sorinaw.github.io/saas-build-vs-buy-calculator`
+   - Your calculator will be live at: [https://sorinaw.github.io/saas-build-vs-buy-calculator](https://sorinaw.github.io/saas-build-vs-buy-calculator)
    - Takes 2-3 minutes to deploy
 
 ### Alternative: Deploy with Git
@@ -138,9 +138,7 @@ Add before `</head>`:
 
 Once deployed, share the link:
 
-```
-https://sorinaw.github.io/saas-build-vs-buy-calculator
-```
+**[https://sorinaw.github.io/saas-build-vs-buy-calculator](https://sorinaw.github.io/saas-build-vs-buy-calculator)**
 
 **Pro tip:** Create a short link with bit.ly or your own domain!
 
@@ -240,4 +238,4 @@ Based on the "Build vs Buy" framework for engineering decision-making.
 
 ---
 
-**Deploy yours in 5 minutes:** https://github.com/SorinaW/saas-build-vs-buy-calculator
+**Deploy yours in 5 minutes:** [https://github.com/SorinaW/saas-build-vs-buy-calculator](https://github.com/SorinaW/saas-build-vs-buy-calculator)
